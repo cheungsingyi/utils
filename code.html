@@ -1,4 +1,48 @@
-High-Potential Customer Triage - Project CodeThis file contains all the Python code for the customer triage project, organized by phase.1. 1_create_benchmark_model.pyThis script (Phase 1) uses the large, mature 'Reference Population' dataset to create and save the stable 'Benchmark Model' (master_scaler.pkl and benchmark_config.json)."""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>High-Potential Customer Triage - Project Code</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* A simple style for code blocks to make them look good */
+        pre {
+            background-color: #f3f4f6; /* gray-100 */
+            border-radius: 0.5rem; /* rounded-lg */
+            padding: 1rem; /* p-4 */
+            overflow-x: auto; /* Allow horizontal scrolling */
+            font-family: 'Courier New', Courier, monospace;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+    <!-- Load Inter font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto max-w-4xl p-6 lg:p-12">
+        
+        <header class="mb-10">
+            <h1 class="text-4xl font-bold text-gray-900 mb-2">High-Potential Customer Triage - Project Code</h1>
+            <p class="text-lg text-gray-600">This file contains all the Python code for the customer triage project, organized by phase.</p>
+        </header>
+
+        <hr class="mb-10">
+
+        <!-- Section 1 -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-semibold text-gray-900 mb-4">1. `1_create_benchmark_model.py`</h2>
+            <p class="text-gray-700 mb-4">
+                This script (Phase 1) uses the large, mature 'Reference Population' dataset to create and save the stable 'Benchmark Model' (`master_scaler.pkl` and `benchmark_config.json`).
+            </p>
+            <pre><code class="language-python">
+"""
 Phase 1: Benchmark Creation (Building the "Ruler")
 
 This script uses the large, mature 'Reference Population' dataset.
@@ -118,7 +162,17 @@ def create_benchmark():
 
 if __name__ == "__main__":
     create_benchmark()
-2. 2_discover_triage_rules.pyThis script (Phase 2) uses the 'Analysis Cohort' (6-month data) and applies the 'Benchmark Model' to it. It then runs exploratory data analysis (EDA) to find the predictive rules for our scorecard."""
+</code></pre>
+        </section>
+
+        <!-- Section 2 -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-semibold text-gray-900 mb-4">2. `2_discover_triage_rules.py`</h2>
+            <p class="text-gray-700 mb-4">
+                This script (Phase 2) uses the 'Analysis Cohort' (6-month data) and applies the 'Benchmark Model' to it. It then runs exploratory data analysis (EDA) to find the predictive rules for our scorecard.
+            </p>
+            <pre><code class="language-python">
+"""
 Phase 2: Rule Discovery (The "Analysis")
 
 This script uses the 'Analysis Cohort' (e.g., the 6-month dataset).
@@ -324,7 +378,17 @@ def analyze_cohort():
 
 if __name__ == "__main__":
     analyze_cohort()
-3. 3_triage_new_customer.pyThis script (Phase 3) contains the final, deployable function triage_new_customer. This function takes a new customer's form data, applies our new scorecard rules, and returns a routing decision. This is the script you integrate into your production application."""
+</code></pre>
+        </section>
+
+        <!-- Section 3 -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-semibold text-gray-900 mb-4">3. `3_triage_new_customer.py`</h2>
+            <p class="text-gray-700 mb-4">
+                This script (Phase 3) contains the final, deployable function `triage_new_customer`. This function takes a new customer's form data, applies our new scorecard rules, and returns a routing decision. This is the script you integrate into your production application.
+            </p>
+            <pre><code class="language-python">
+"""
 Phase 3: The Triage Scorecard & Deployment
 
 This script contains the FINAL, DEPLOYABLE function.
@@ -362,7 +426,7 @@ def triage_new_customer(form_data):
             'condition': lambda d: d.get('Industry') in ['Manufacturing', 'Software', 'Wholesale Trade']
         },
         {
-            'name': 'Very High Reported Revenue',
+            'name':. 'Very High Reported Revenue',
             'points': 15,
             'condition': lambda d: d.get('Self_Reported_Revenue', 0) > 20000000
         },
@@ -467,8 +531,25 @@ if __name__ == "__main__":
         result = triage_new_customer(client)
         print(f"\nClient {client['CustomerID']} ({client['Industry']}):")
         print(json.dumps(result, indent=2))
-4. requirements.txtThis file lists the necessary Python packages to run the scripts.pandas
+</code></pre>
+        </section>
+
+        <!-- Section 4 -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-semibold text-gray-900 mb-4">4. `requirements.txt`</h2>
+            <p class="text-gray-700 mb-4">
+                This file lists the necessary Python packages to run the scripts.
+            </p>
+            <pre><code class="language-text">
+pandas
 scikit-learn
 seaborn
 matplotlib
 numpy
+</code></pre>
+        </section>
+
+    </div>
+
+</body>
+</html>
