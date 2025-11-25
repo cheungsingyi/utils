@@ -1,37 +1,23 @@
----
-title: "High-Value Customer Onboarding Scorecard Analysis"
-author: "Data Analyst"
-date: "2025-11-25"
-output: 
-  html_document:
-    toc: true
-    theme: united
----
+# High-Value Customer Onboarding Scorecard Analysis
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
-library(reticulate)
-# Ensure you have a python environment available. 
-# You might need to run: reticulate::install_miniconda() or use_python("/usr/bin/python3")
-```
-
-# 1. Project Context & Objective
 **Goal**: Identify high-potential corporate customers at the onboarding stage using limited KYC data (approx. 6 months history).
 **Method**: Rule-based Scorecard derived from Weight of Evidence (WoE) and Information Value (IV).
-**Language**: Python (via Reticulate in RMarkdown)
+**Language**: Python
 
 ---
 
-# 2. Data Simulation (Mock Data)
+## 1. Data Simulation (Mock Data)
 Since we don't have the raw data loaded, we will simulate a dataset that reflects your scenario:
 - **6 months of data** (Jan to June).
 - **Fields**: `registered_capital`, `office_location`, `company_age`, `industry`.
 - **Missing Values**: `office_location` will have ~50% missing.
 - **Revenue**: Transaction fees/deposits for the first 3 months.
 
-```{python simulate_data}
+```python
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 from datetime import datetime, timedelta
 
 # Set random seed for reproducibility
@@ -86,14 +72,14 @@ print(df.head())
 
 ---
 
-# 3. Target Definition (Handling Time-on-Books Bias)
+## 2. Target Definition (Handling Time-on-Books Bias)
 **Challenge**: Customers from January have 6 months of data, June customers have only 1 month.
 **Solution**: 
 1. Use a **Standardized Window** (First 3 Months Average).
 2. Only use **Mature Customers** (Onboarded >= 3 months ago) for training.
 3. Define "High Value" using **Cohort-based Percentiles** (Top 20% of *that month's* intake).
 
-```{python define_target}
+```python
 # 1. Calculate Tenure (Months on Book) assuming current date is July 1st
 current_date = datetime(2025, 7, 1)
 df['months_on_book'] = (current_date - df['onboarding_date']).dt.days / 30
@@ -118,12 +104,12 @@ print(df_train['target'].value_counts())
 
 ---
 
-# 4. Data Cleaning & Feature Engineering
+## 3. Data Cleaning & Feature Engineering
 **Strategy**:
 - **Missing Values**: Do NOT drop. Convert `NaN` to "Missing" category.
 - **Binning**: Convert continuous variables (Capital) into categories (Bins).
 
-```{python feature_engineering}
+```python
 # 1. Handle Missing Values (Explicitly make them a category)
 df_train['office_location'] = df_train['office_location'].fillna('Missing')
 
@@ -144,14 +130,14 @@ print(model_data.head())
 
 ---
 
-# 5. IV & WoE Calculation (The Core Logic)
+## 4. IV & WoE Calculation (The Core Logic)
 We calculate **Information Value (IV)** to find the best features and **Weight of Evidence (WoE)** to assign scores.
 
 **Formula**:
 $$WoE = \ln(\frac{\% Good}{\% Bad})$$
 $$IV = (\% Good - \% Bad) \times WoE$$
 
-```{python iv_function}
+```python
 def calculate_iv_woe(df, feature, target):
     """
     Calculates WoE and IV for a given feature.
@@ -193,11 +179,11 @@ for feat in features_to_analyze:
 
 ---
 
-# 6. Scorecard Generation (The Deliverable)
+## 5. Scorecard Generation (The Deliverable)
 We convert WoE into simple integer scores for the business team.
 **Rule**: `Score = Round(WoE * 10)`
 
-```{python generate_scorecard}
+```python
 def generate_scorecard_table(iv_table):
     scorecard = iv_table.copy()
     scorecard['Score'] = (scorecard['WoE'] * 10).round().astype(int)
@@ -238,7 +224,25 @@ print(capital_scorecard.to_string(index=False))
 
 ---
 
-# 7. Next Steps
-1.  **Run this Rmd** (it will use the `reticulate` package to run Python).
-2.  **Filter**: Drop features with IV < 0.02.
-3.  **Export**: Save the final Score tables to Excel for the operations team.
+## 6. Enhancement: Visualization (Optional)
+Visualizing the WoE helps explain the "Why" to stakeholders.
+
+```python
+def plot_woe(iv_table, feature_name):
+    plt.figure(figsize=(10, 6))
+    sns.barplot(x='Value', y='WoE', data=iv_table, palette='viridis')
+    plt.title(f'Weight of Evidence (WoE) by {feature_name}')
+    plt.axhline(0, color='black', linestyle='--')
+    plt.ylabel('WoE (Log Odds)')
+    plt.show()
+
+# Example Plot
+# plot_woe(iv_results['office_location'], 'Office Location')
+```
+
+---
+
+## 7. Next Steps
+1.  **Run this Workflow**: Execute the Python code on your full dataset.
+2.  **Filter Features**: Drop features with IV < 0.02.
+3.  **Export Rules**: Save the final Score tables to Excel/SQL for the operations team.
